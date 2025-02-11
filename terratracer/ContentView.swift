@@ -9,16 +9,30 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        VStack(spacing: 20) {
+            Text("TerraTracer")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.brown)
+
+            Button(action: {
+                print("Button Clicked!")
+            }) {
+                Text("Click Me")
+                    .padding()
+                    .background(Color.brown)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+            }
         }
         .padding()
     }
 }
 
-#Preview {
-    ContentView()
+// Preview for Xcode Canvas
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
+
