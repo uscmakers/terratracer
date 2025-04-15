@@ -1,17 +1,18 @@
-"""Computer Subscriber for LIDAR Distance Logging"""
+"""Computer Subscriber for LIDAR Distance Logging with Elapsed Time"""
 
 import paho.mqtt.client as mqtt
 import csv
 import os
-from datetime import datetime
+import time
 
 CSV_FILENAME = "lidar_log.csv"
+START_TIME = time.time()  # Record start time
 
 # Create CSV with headers if it doesn't exist
 if not os.path.exists(CSV_FILENAME):
     with open(CSV_FILENAME, mode="w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Timestamp", "Distance (cm)"])
+        writer.writerow(["Elapsed Time (s)", "Distance (cm)"])
 
 def on_connect(client, userdata, flags, rc):
     print("Connected to MQTT broker with result code " + str(rc))
@@ -20,18 +21,17 @@ def on_connect(client, userdata, flags, rc):
 def lidar_callback(client, userdata, msg):
     try:
         distance = float(msg.payload.decode())
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print(f"{timestamp}, Distance: {distance} cm")
+        elapsed = round(time.time() - START_TIME, 2)  # Elapsed time in seconds
+        print(f"{elapsed}s, Distance: {distance} cm")
 
-        # Append to CSV
         with open(CSV_FILENAME, mode="a", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([timestamp, distance])
+            writer.writerow([elapsed, distance])
     except Exception as e:
         print(f"Error handling message: {e}")
 
 def on_message(client, userdata, msg):
-    pass  # Not used
+    pass  # Unused
 
 if __name__ == '__main__':
     client = mqtt.Client()
