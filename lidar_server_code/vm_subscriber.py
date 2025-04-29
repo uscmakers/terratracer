@@ -37,6 +37,9 @@ def lidar_callback(client, userdata, msg):
 
     except Exception as e:
         print(f"Error handling message: {e}")
+def esp_callback(client, userdata, msg):
+    payload = msg.payload.decode()
+    print(f"esp: {payload}")
 
 def on_message(client, userdata, msg):
     pass  # Not used
@@ -46,5 +49,6 @@ if __name__ == '__main__':
     client.on_connect = on_connect
     client.on_message = on_message
     client.message_callback_add("drone/lidar", lidar_callback)
+    client.message_callback_add("fomo_alien", esp_callback)
     client.connect("test.mosquitto.org", 1883, 60)
     client.loop_forever()
