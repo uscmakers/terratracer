@@ -1,4 +1,4 @@
-"""Raspberry Pi LIDAR Publisher (Starts Measuring at 9 PM)"""
+"""Raspberry Pi LIDAR Publisher (Starts Measuring at 9 PM) with Timestamp"""
 
 import smbus2
 import time
@@ -49,6 +49,14 @@ if __name__ == '__main__':
     while True:
         distance = read_lidar()
         if distance is not None:
-            print(f"[RPI] Distance: {distance} cm")
-            client.publish("drone/lidar", str(distance))
+            now = datetime.datetime.now()
+            timestamp = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Format with milliseconds
+            message = f"{timestamp}, {distance}"
+            
+            # PRINT the timestamp and distance
+            print(f"[RPI] {timestamp}, Distance: {distance} cm")
+            
+            # SEND the message over MQTT
+            client.publish("drone/lidar", message)
+            
         time.sleep(0.1)  # adjust as needed

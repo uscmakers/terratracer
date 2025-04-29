@@ -1,4 +1,4 @@
-"""Computer Subscriber for LIDAR Distance Logging (Immediate Start)"""
+"""Computer Subscriber for LIDAR Distance Logging (Immediate Start, Updated Format)"""
 
 import paho.mqtt.client as mqtt
 import csv
@@ -19,12 +19,13 @@ def on_connect(client, userdata, flags, rc):
 def lidar_callback(client, userdata, msg):
     try:
         payload = msg.payload.decode()
+        print(f"[DEBUG] Raw received payload: '{payload}'")  # optional debug line
 
-        # Expected format: "2025-04-28 21:00:00.123, Distance: 237 cm"
-        if ", Distance:" in payload:
-            timestamp_part, distance_part = payload.split(", Distance:")
+        # Now the expected format is: "timestamp, distance"
+        if "," in payload:
+            timestamp_part, distance_part = payload.split(",", 1)
             timestamp = timestamp_part.strip()
-            distance = float(distance_part.replace("cm", "").strip())
+            distance = float(distance_part.strip())
 
             print(f"{timestamp}, Distance: {distance} cm")
 
